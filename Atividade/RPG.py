@@ -1,46 +1,34 @@
-# Importações necessárias do módulo 'abc' (Abstract Base Classes)
 from abc import ABC, abstractmethod
-import time # Usaremos para pequenas pausas e dar um ritmo à batalha
+import time 
 
-# Parte 1: A Classe Abstrata "Contrato"
+#Classe de personagem
 class Personagem(ABC):
-    """
-    Classe Base Abstrata que define o contrato para todos os personagens.
-    Não é possível criar um objeto diretamente desta classe.
-    """
     def __init__(self, nome, vida, nivel):
         self.nome = nome
         self.vida = vida
         self.nivel = nivel
 
     def exibir_status(self):
-        """Método concreto, compartilhado por todas as subclasses."""
         print(f"Nome: {self.nome} | Vida: {self.vida} | Nível: {self.nivel}")
 
     @abstractmethod
     def atacar(self, alvo):
-        """
-        Método abstrato. Força as subclasses a implementarem sua própria lógica de ataque.
-        """
         pass
 
     @abstractmethod
     def defender(self, dano):
-        """
-        Método abstrato. Força as subclasses a implementarem sua própria lógica de defesa.
-        """
         pass
 
-# Parte 2: As Classes Concretas que Seguem o Contrato
 
+#Classe da classe guerreiro
 class Guerreiro(Personagem):
-    """Guerreiro é um tipo de Personagem com foco em força."""
+   
     def __init__(self, nome, vida, nivel, forca):
         super().__init__(nome, vida, nivel)
         self.forca = forca
 
     def atacar(self, alvo):
-        # Fórmula de dano específica para o Guerreiro
+       
         dano = int(self.nivel * self.forca * 1.2) 
         print(f"🗡️  {self.nome} ataca {alvo.nome} com sua espada, causando {dano} de dano!")
         alvo.defender(dano)
@@ -49,17 +37,17 @@ class Guerreiro(Personagem):
         self.vida -= dano
         print(f"🛡️  {self.nome} recebeu {dano} de dano.")
         if self.vida < 0:
-            self.vida = 0 # Garante que a vida não fique negativa
+            self.vida = 0 
 
 
+#classe da classe mago
 class Mago(Personagem):
-    """Mago é um tipo de Personagem com foco em magia."""
     def __init__(self, nome, vida, nivel, magia):
         super().__init__(nome, vida, nivel)
         self.magia = magia
 
     def atacar(self, alvo):
-        # Fórmula de dano específica para o Mago
+       
         dano = int(self.nivel * self.magia * 1.5)
         print(f"🔥 {self.nome} lança uma bola de fogo em {alvo.nome}, causando {dano} de dano!")
         alvo.defender(dano)
@@ -71,10 +59,9 @@ class Mago(Personagem):
             self.vida = 0
 
 
-# Parte 3: A Classe de Orquestração da Batalha
 
+#classe que gerencia a batalha
 class Batalha:
-    """Gerencia a luta entre dois personagens."""
     def iniciar_batalha(self, jogador1, jogador2):
         print(f"--- A BATALHA COMEÇA: {jogador1.nome} vs {jogador2.nome} ---")
         turno = 1
@@ -84,12 +71,12 @@ class Batalha:
             
             # Jogador 1 ataca Jogador 2
             jogador1.atacar(jogador2)
-            time.sleep(1) # Pausa de 1 segundo
+            time.sleep(1) 
 
-            # Se o jogador 2 ainda estiver vivo, ele ataca de volta
+            
             if jogador2.vida > 0:
                 jogador2.atacar(jogador1)
-                time.sleep(1) # Pausa de 1 segundo
+                time.sleep(1) # 
 
             # Exibe o status ao final do turno
             print("\n--- Status Pós-Turno ---")
@@ -108,19 +95,14 @@ class Batalha:
             print("A batalha terminou em empate!")
 
 
-# --- Exemplo de Uso ---
+
 if __name__ == "__main__":
     
     # Criando os personagens
-    guerreiro = Guerreiro("Aragorn", 120, 10, 8)
-    mago = Mago("Gandalf", 80, 12, 10)
+    guerreiro = Guerreiro("Aragorn", 2000, 15, 8)
+    mago = Mago("Gandalf", 2000, 20, 10)
 
     # Iniciando a batalha
     batalha = Batalha()
     batalha.iniciar_batalha(guerreiro, mago)
 
-    # --- Desafio ---
-    # A linha abaixo vai gerar um erro, como esperado!
-    # Isso prova que não podemos criar um objeto de uma classe abstrata.
-    # tente_criar = Personagem("Teste", 100, 1) 
-    # Erro: TypeError: Can't instantiate abstract class Personagem with abstract methods atacar, defender
