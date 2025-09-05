@@ -71,7 +71,7 @@ print('-' * 25)
 print('PRODUTOS NO CARRINHO: ')
 carrinho.listar_produtos()
 
-total = carrinho.calcular_total
+total = carrinho.calcular_total()
 
 print(f'Total da compra: R${total}')
 
