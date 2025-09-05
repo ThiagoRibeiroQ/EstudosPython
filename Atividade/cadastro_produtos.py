@@ -1,126 +1,79 @@
-# Importações necessárias do módulo 'abc' (Abstract Base Classes)
-from abc import ABC, abstractmethod
-import time # Usaremos para pequenas pausas e dar um ritmo à batalha
-
-# Parte 1: A Classe Abstrata "Contrato"
-class Personagem(ABC):
-    """
-    Classe Base Abstrata que define o contrato para todos os personagens.
-    Não é possível criar um objeto diretamente desta classe.
-    """
-    def __init__(self, nome, vida, nivel):
+class Produto():
+    def __init__(self, nome, preco, codigo):
         self.nome = nome
-        self.vida = vida
-        self.nivel = nivel
-
-    def exibir_status(self):
-        """Método concreto, compartilhado por todas as subclasses."""
-        print(f"Nome: {self.nome} | Vida: {self.vida} | Nível: {self.nivel}")
-
-    @abstractmethod
-    def atacar(self, alvo):
-        """
-        Método abstrato. Força as subclasses a implementarem sua própria lógica de ataque.
-        """
-        pass
-
-    @abstractmethod
-    def defender(self, dano):
-        """
-        Método abstrato. Força as subclasses a implementarem sua própria lógica de defesa.
-        """
-        pass
-
-# Parte 2: As Classes Concretas que Seguem o Contrato
-
-class Guerreiro(Personagem):
-    """Guerreiro é um tipo de Personagem com foco em força."""
-    def __init__(self, nome, vida, nivel, forca):
-        super().__init__(nome, vida, nivel)
-        self.forca = forca
-
-    def atacar(self, alvo):
-        # Fórmula de dano específica para o Guerreiro
-        dano = int(self.nivel * self.forca * 1.2) 
-        print(f"🗡️  {self.nome} ataca {alvo.nome} com sua espada, causando {dano} de dano!")
-        alvo.defender(dano)
-
-    def defender(self, dano):
-        self.vida -= dano
-        print(f"🛡️  {self.nome} recebeu {dano} de dano.")
-        if self.vida < 0:
-            self.vida = 0 # Garante que a vida não fique negativa
+        self.preco = preco
+        self.codigo = codigo
 
 
-class Mago(Personagem):
-    """Mago é um tipo de Personagem com foco em magia."""
-    def __init__(self, nome, vida, nivel, magia):
-        super().__init__(nome, vida, nivel)
-        self.magia = magia
-
-    def atacar(self, alvo):
-        # Fórmula de dano específica para o Mago
-        dano = int(self.nivel * self.magia * 1.5)
-        print(f"🔥 {self.nome} lança uma bola de fogo em {alvo.nome}, causando {dano} de dano!")
-        alvo.defender(dano)
-
-    def defender(self, dano):
-        self.vida -= dano
-        print(f"🛡️  {self.nome} recebeu {dano} de dano.")
-        if self.vida < 0:
-            self.vida = 0
+    def exibir_detalhes(self):
+        print(f'Nome: {self.nome} | Preço: R${self.preco} | Código do produto: {self.codigo}')
 
 
-# Parte 3: A Classe de Orquestração da Batalha
 
-class Batalha:
-    """Gerencia a luta entre dois personagens."""
-    def iniciar_batalha(self, jogador1, jogador2):
-        print(f"--- A BATALHA COMEÇA: {jogador1.nome} vs {jogador2.nome} ---")
-        turno = 1
-        
-        while jogador1.vida > 0 and jogador2.vida > 0:
-            print(f"\n--- Turno {turno} ---")
-            
-            # Jogador 1 ataca Jogador 2
-            jogador1.atacar(jogador2)
-            time.sleep(1) # Pausa de 1 segundo
-
-            # Se o jogador 2 ainda estiver vivo, ele ataca de volta
-            if jogador2.vida > 0:
-                jogador2.atacar(jogador1)
-                time.sleep(1) # Pausa de 1 segundo
-
-            # Exibe o status ao final do turno
-            print("\n--- Status Pós-Turno ---")
-            jogador1.exibir_status()
-            jogador2.exibir_status()
-            
-            turno += 1
-
-        # Declara o vencedor
-        print("\n--- FIM DA BATALHA ---")
-        if jogador1.vida > 0:
-            print(f"🏆 O vencedor é {jogador1.nome}!")
-        elif jogador2.vida > 0:
-            print(f"🏆 O vencedor é {jogador2.nome}!")
-        else:
-            print("A batalha terminou em empate!")
+class Livro(Produto):
+    def __init__(self, nome, preco, codigo, autor):
+        super().__init__(nome, preco, codigo)
+        self.autor = autor
 
 
-# --- Exemplo de Uso ---
-if __name__ == "__main__":
+    def exibir_detalhes(self):
+        super().exibir_detalhes()
+        print(f'Autor: {self.autor}')
+
+
+
+class Eletronico(Produto):
+    def __init__(self, nome, preco, codigo, marca):
+        super().__init__(nome, preco, codigo)
+        self.marca = marca
+
+    def exibir_detalhes(self):
+        super().exibir_detalhes()
+        print(f'Marca: {self.marca}')
+
+
+class CarrinhoDeCompras():
+    def __init__(self):
+        self.produtos = []
+
+    def adicionar_produto(self, produto):
+        self.produtos.append(produto)
+        print(f'O produto: {produto.nome} foi adicionado ao carrinho.')
     
-    # Criando os personagens
-    guerreiro = Guerreiro("Aragorn", 120, 10, 8)
-    mago = Mago("Gandalf", 80, 12, 10)
+    def listar_produtos(self):
+        if not self.produtos:
+            print("O carrinho está vazio.")
+            return
+            
+        for produto in self.produtos:
+            produto.exibir_detalhes()
+            print("-" * 25) 
 
-    # Iniciando a batalha
-    batalha = Batalha()
-    batalha.iniciar_batalha(guerreiro, mago)
+    def calcular_total(self):
+        total = 0.0
+        for produto in self.produtos:
+            total += produto.preco
+        return total
+    
 
-    # --- Desafio ---
-    # A linha abaixo vai gerar um erro, como esperado!
-    # Isso prova que não podemos criar um objeto de uma classe abstrata.
-    # tente_criar = Personagem("Teste", 100, 1) 
-    # Erro: TypeError: Can't instantiate abstract class Personagem with abstract methods atacar, defender
+livro1 = Livro('O Hobbit', 40, 123232, 'J.R.R Tolkien')
+eletronico1 = Eletronico('PlayStation 5', 3500, 1823784, 'Sony')
+livro2 = Livro('Arruinados pelo amor de Deus', 40, 1234345, 'Yago Martins')
+
+carrinho = CarrinhoDeCompras()
+
+carrinho.adicionar_produto(livro1)
+carrinho.adicionar_produto(livro2)
+carrinho.adicionar_produto(eletronico1)
+
+print('-' * 25)
+
+print('PRODUTOS NO CARRINHO: ')
+carrinho.listar_produtos()
+
+total = carrinho.calcular_total()
+
+print(f'Total da compra: R${total}')
+
+print('-' * 25)
+
